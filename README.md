@@ -5,6 +5,8 @@ Zang.js is a simple Javascript framework for working with the HTML5 pushstate AP
 
 Clicks on links that match the defined routes are automatically captured by the framework.
 
+Based heavily on jquery.pjax.js and Backbone.Router. Thanks you guys!
+
 Requires jQuery 1.7+
 
 Example
