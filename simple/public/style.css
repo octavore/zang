@@ -1,0 +1,19 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3 { margin: 0 0 10px; }
+
+#container {
+  margin: 20px auto;
+  padding: 10px;
+  border: 1px solid #aaa;
+  width: 600px;
+  min-height: 600px;
+}
+
+#zang_target {
+  background: 10px;
+  border: 1px solid #aaa;
+  padding: 10px;
+}

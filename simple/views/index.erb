@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <link rel='stylesheet' href='/style.css' type='text/css' />
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src='/zang.js'></script>
+    <script src='/example.js'></script>
+  </head>
+  <body>
+    <div id='container'>
+      <h1>Zang.js demo</h1>
+      <h2>Page loaded: <%= Time.now.strftime("%I:%M:%S") %></h2>
+      <ul>
+        <li>
+          <a href='/elephant'>Elephants</a>
+        </li>
+      </ul>
+      <div id='zang_target'>
+        Dynamically loaded content goes here!
+      </div>
+    </div>
+  </body>
+</html>
