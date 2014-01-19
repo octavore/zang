@@ -40,6 +40,16 @@ class Zang
     return true
 
 
+  # navigates to the path and (if given) executes callback on success
+  goto: (path, callback) =>
+    if path isnt @loadedPath
+      if @_matchState(path)
+        window.history.pushState {}, document.title, @_targetPath(path)
+        callback() if callback?
+        return true
+    return false
+
+
   _handlePops: =>
     $(window).bind 'popstate', (event) =>
        badPop = not @popped or @loadedPath is @initialURL
@@ -48,23 +58,20 @@ class Zang
        @_checkUrl()
 
 
-   # Handles link-based navigation
-   # turns regular links into super links!
-   _handleClicks: =>
-     $('html').on 'click', 'a', (e) =>
+  # Handles link-based navigation
+  # turns regular links into super links!
+  _handleClicks: =>
+    $('html').on 'click', 'a', (e) =>
 
-       # Middle click, cmd click, and ctrl click
-       return if e.which > 1 or e.metaKey
+      # Middle click, cmd click, and ctrl click
+      return if e.which > 1 or e.metaKey
 
-       path = @_getPath(e.target)
-       if path isnt @loadedPath
-         if @_matchState(path)
-           window.history.pushState {}, document.title, @_targetPath(path)
-           e.preventDefault()
+      @goto @_getPath(e.target), ->
+         e.preventDefault()
 
 
   # checks the current url against routes
-  _checkUrl: () =>
+  _checkUrl: =>
     path = @_getPath(window.location)
     @_matchState(path) if path isnt @loadedPath
 
