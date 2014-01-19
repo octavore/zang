@@ -26,7 +26,7 @@ class Zang
     route_regex = @_routeToRegex(route)
 
     callback = (path) =>
-      path = @_targetPath(path)
+      # path = @_targetPath(path)
       options.callback && options.callback(path)
 
     @routes.push [route, route_regex, callback]
@@ -107,8 +107,8 @@ class Zang
   # (note, without root or leading slash)
   _getPath: (loc) ->
     path = decodeURIComponent(loc.pathname)
-    search = loc.search;
-    path += search if search;
+    search = loc.search
+    path += search if search
     path = path.substr(@root.length) if not path.indexOf(@root)
     return path.replace(leadingSlash, '')
 

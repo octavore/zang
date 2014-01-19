@@ -29,7 +29,6 @@ Zang = (function() {
       _this = this;
     route_regex = this._routeToRegex(route);
     callback = function(path) {
-      path = _this._targetPath(path);
       return options.callback && options.callback(path);
     };
     this.routes.push([route, route_regex, callback]);
