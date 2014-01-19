@@ -16,7 +16,6 @@ Zang = (function() {
     this.root = root != null ? root : '/';
     this._matchState = __bind(this._matchState, this);
     this._checkUrl = __bind(this._checkUrl, this);
-    this._handleClicks = __bind(this._handleClicks, this);
     this._handlePops = __bind(this._handlePops, this);
     this.goto = __bind(this.goto, this);
     this.start = __bind(this.start, this);
@@ -82,7 +81,7 @@ Zang = (function() {
 
   Zang.prototype._handleClicks = function() {
     var _this = this;
-    return $('html').on('click', 'a', function(e) {
+    return $('html').on('click', 'a[href]', function(e) {
       if (e.which > 1 || e.metaKey) {
         return;
       }

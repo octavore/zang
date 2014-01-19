@@ -65,8 +65,8 @@ class Zang
 
   # Handles link-based navigation
   # turns regular links into super links!
-  _handleClicks: =>
-    $('html').on 'click', 'a', (e) =>
+  _handleClicks: ->
+    $('html').on 'click', 'a[href]', (e) =>
 
       # Middle click, cmd click, and ctrl click
       return if e.which > 1 or e.metaKey
