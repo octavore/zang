@@ -46,21 +46,21 @@ class Zang
 
 
   # navigates to the path and (if given) executes callback on success
-  goto: (path, callback) =>
-    if path isnt @loadedPath
-      if @_matchState(path)
-        window.history.pushState {}, document.title, @_targetPath(path)
-        callback() if callback?
-        return true
+  goto: (path) ->
+    if @_matchState(path)
+      window.history.pushState {}, document.title, @_targetPath(path)
+      return true
     return false
 
 
-  _handlePops: =>
+  _handlePops: ->
     $(window).bind 'popstate', (event) =>
-       badPop = not @popped or @loadedPath is @initialURL
-       @popped = true
-       return if badPop
-       @_checkUrl()
+      badPop = not @popped or @loadedPath is @initialURL
+      @popped = true # catch first pop
+      return if badPop
+
+      path = @_getPath(window.location)
+      @_matchState(path)
 
 
   # Handles link-based navigation
@@ -70,23 +70,19 @@ class Zang
 
       # Middle click, cmd click, and ctrl click
       return if e.which > 1 or e.metaKey
-
-      @goto @_getPath(e.target), ->
-         e.preventDefault()
-
-
-  # checks the current url against routes
-  _checkUrl: =>
-    path = @_getPath(window.location)
-    @_matchState(path) if path isnt @loadedPath
+      if @goto @_getPath(e.target)
+        e.preventDefault()
 
 
   # Given a path (as processed by _getPath), search
-  # for a match among the routes and execute
+  # for a match among the routes and execute the registered
   # callback if a match is found
-  _matchState: (path) =>
-    matched = false
+  _matchState: (path) ->
+    # already loaded?
+    if path is @loadedPath
+      return false
 
+    matched = false
     for route_array in @routes
       [route, route_regex, route_callback] = route_array
       if route_regex.test(path)

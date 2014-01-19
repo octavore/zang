@@ -14,10 +14,6 @@ Zang = (function() {
   function Zang(routes, root) {
     var opts, route;
     this.root = root != null ? root : '/';
-    this._matchState = __bind(this._matchState, this);
-    this._checkUrl = __bind(this._checkUrl, this);
-    this._handlePops = __bind(this._handlePops, this);
-    this.goto = __bind(this.goto, this);
     this.start = __bind(this.start, this);
     this.register = __bind(this.register, this);
     if (this.root !== '/') {
@@ -53,15 +49,10 @@ Zang = (function() {
     return true;
   };
 
-  Zang.prototype.goto = function(path, callback) {
-    if (path !== this.loadedPath) {
-      if (this._matchState(path)) {
-        window.history.pushState({}, document.title, this._targetPath(path));
-        if (callback != null) {
-          callback();
-        }
-        return true;
-      }
+  Zang.prototype.goto = function(path) {
+    if (this._matchState(path)) {
+      window.history.pushState({}, document.title, this._targetPath(path));
+      return true;
     }
     return false;
   };
@@ -69,13 +60,14 @@ Zang = (function() {
   Zang.prototype._handlePops = function() {
     var _this = this;
     return $(window).bind('popstate', function(event) {
-      var badPop;
+      var badPop, path;
       badPop = !_this.popped || _this.loadedPath === _this.initialURL;
       _this.popped = true;
       if (badPop) {
         return;
       }
-      return _this._checkUrl();
+      path = _this._getPath(window.location);
+      return _this._matchState(path);
     });
   };
 
@@ -85,22 +77,17 @@ Zang = (function() {
       if (e.which > 1 || e.metaKey) {
         return;
       }
-      return _this.goto(_this._getPath(e.target), function() {
+      if (_this.goto(_this._getPath(e.target))) {
         return e.preventDefault();
-      });
+      }
     });
-  };
-
-  Zang.prototype._checkUrl = function() {
-    var path;
-    path = this._getPath(window.location);
-    if (path !== this.loadedPath) {
-      return this._matchState(path);
-    }
   };
 
   Zang.prototype._matchState = function(path) {
     var matched, route, route_array, route_callback, route_regex, _i, _len, _ref;
+    if (path === this.loadedPath) {
+      return false;
+    }
     matched = false;
     _ref = this.routes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
