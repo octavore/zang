@@ -8,8 +8,13 @@ class Zang
     window.history.replaceState and
     not navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)
 
+  leadingSlash = /^\//
+  trailingSlash = /\/$/
 
+  # create a new router. root is optional, but if provided should
+  # be a path beginning with / and without a trailing slash
   constructor: (routes, @root='/') ->
+    @root = @root.replace(trailingSlash, '') if @root isnt '/'
     @routes = []
     for route, opts of routes
       @register route, opts
@@ -94,12 +99,13 @@ class Zang
 
   # Return the full path, inclusive of root
   _targetPath: (path) ->
-    @root + path
+    if path.length > 0 and path[0] is '?'
+    then "#{@root}#{path}"
+    else "#{@root}/#{path}"
 
 
   # Gets the path of interest from a location or target object
   # (note, without root or leading slash)
-  leadingSlash = /^\//;
   _getPath: (loc) ->
     path = decodeURIComponent(loc.pathname)
     search = loc.search;
@@ -117,5 +123,6 @@ class Zang
   _routeToRegex: (route) ->
     route = route.replace(escapeRegExp, '\\$&')
                  .replace(namedParam, '([^\/]+)')
-                 .replace(splatParam, '(.*?)');
+                 .replace(splatParam, '(.*?)')
+                 .replace(leadingSlash);
     new RegExp('^' + route + '$');

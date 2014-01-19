@@ -3,9 +3,13 @@ var Zang,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 Zang = (function() {
-  var escapeRegExp, hasPushState, leadingSlash, namedParam, splatParam;
+  var escapeRegExp, hasPushState, leadingSlash, namedParam, splatParam, trailingSlash;
 
   hasPushState = window.history && window.history.pushState && window.history.replaceState && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/);
+
+  leadingSlash = /^\//;
+
+  trailingSlash = /\/$/;
 
   function Zang(routes, root) {
     var opts, route;
@@ -17,6 +21,9 @@ Zang = (function() {
     this.goto = __bind(this.goto, this);
     this.start = __bind(this.start, this);
     this.register = __bind(this.register, this);
+    if (this.root !== '/') {
+      this.root = this.root.replace(trailingSlash, '');
+    }
     this.routes = [];
     for (route in routes) {
       opts = routes[route];
@@ -111,10 +118,12 @@ Zang = (function() {
   };
 
   Zang.prototype._targetPath = function(path) {
-    return this.root + path;
+    if (path.length > 0 && path[0] === '?') {
+      return "" + this.root + path;
+    } else {
+      return "" + this.root + "/" + path;
+    }
   };
-
-  leadingSlash = /^\//;
 
   Zang.prototype._getPath = function(loc) {
     var path, search;
@@ -136,7 +145,7 @@ Zang = (function() {
   escapeRegExp = /[-[\]{}()+?.,\\^$|#\s]/g;
 
   Zang.prototype._routeToRegex = function(route) {
-    route = route.replace(escapeRegExp, '\\$&').replace(namedParam, '([^\/]+)').replace(splatParam, '(.*?)');
+    route = route.replace(escapeRegExp, '\\$&').replace(namedParam, '([^\/]+)').replace(splatParam, '(.*?)').replace(leadingSlash);
     return new RegExp('^' + route + '$');
   };
 
