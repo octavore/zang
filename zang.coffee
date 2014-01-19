@@ -40,6 +40,9 @@ class Zang
     @initialUrl = @_getPath(window.location)
     @loadedPath = @initialUrl
 
+    # http://stackoverflow.com/questions/6421769/popstate-on-pages-load-in-chrome
+    @initialPop = 'state' in window.history
+
     @_handleClicks()
     @_handlePops()
 
@@ -56,9 +59,8 @@ class Zang
 
   _handlePops: ->
     $(window).bind 'popstate', (event) =>
-      badPop = not @popped or @loadedPath is @initialURL
-      @popped = true # catch first pop
-      return if badPop
+      return if @initialPop and @loadedPath is @initialURL
+      @initialPop = false
 
       path = @_getPath(window.location)
       @_matchState(path)
