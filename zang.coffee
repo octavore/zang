@@ -26,19 +26,22 @@ class Zang
     route_regex = @_routeToRegex(route)
 
     callback = (path) =>
-      # path = @_targetPath(path)
       options.callback && options.callback(path)
 
     @routes.push [route, route_regex, callback]
     return
 
   # Initializes the router and binds the various events
-  start: ->
+  start: (preloaded=true) ->
     return false if @initialized or not hasPushState
 
     @initialized = true
     @initialUrl = @_getPath(window.location)
-    @loadedPath = @initialUrl
+
+    if !preloaded
+      @_matchState @initialUrl
+    else
+      @loadedPath = @initialUrl
 
     # http://stackoverflow.com/questions/6421769/popstate-on-pages-load-in-chrome
     @initialPop = 'state' in window.history

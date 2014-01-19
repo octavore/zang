@@ -34,13 +34,20 @@ Zang = (function() {
     this.routes.push([route, route_regex, callback]);
   };
 
-  Zang.prototype.start = function() {
+  Zang.prototype.start = function(preloaded) {
+    if (preloaded == null) {
+      preloaded = true;
+    }
     if (this.initialized || !hasPushState) {
       return false;
     }
     this.initialized = true;
     this.initialUrl = this._getPath(window.location);
-    this.loadedPath = this.initialUrl;
+    if (!preloaded) {
+      this._matchState(this.initialUrl);
+    } else {
+      this.loadedPath = this.initialUrl;
+    }
     this.initialPop = __indexOf.call(window.history, 'state') >= 0;
     this._handleClicks();
     this._handlePops();
