@@ -20,8 +20,9 @@ class Zang
       @register route, opts
 
 
-  # Registers a route
-  register: (route, options) =>
+  # Registers a route.
+  # Note that leading slashes are removed from the regex
+  register: (route, options) ->
     route_regex = @_routeToRegex(route)
 
     callback = (path) =>
@@ -32,7 +33,7 @@ class Zang
     return
 
   # Initializes the router and binds the various events
-  start: =>
+  start: ->
     return false if @initialized or not hasPushState
 
     @initialized = true
